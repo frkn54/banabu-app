@@ -24,6 +24,12 @@ workflows:
         script: |
           npx cap add ios || true
           npx cap sync ios
+      - name: Native katman + min iOS 15
+        script: |
+          cp native/AppDelegate.swift ios/App/App/AppDelegate.swift
+          sed -i '' "s/platform :ios, '[0-9.]*'/platform :ios, '15.0'/" ios/App/Podfile
+          sed -i '' "s/IPHONEOS_DEPLOYMENT_TARGET = [0-9.]*;/IPHONEOS_DEPLOYMENT_TARGET = 15.0;/g" ios/App/App.xcodeproj/project.pbxproj
+          echo "native uygulandi + min iOS 15"
       - name: CocoaPods
         script: cd ios/App && pod install
       - name: iOS imza — hazır sertifika + profil (banabu_signing)
@@ -62,6 +68,12 @@ workflows:
         script: |
           npx cap add ios || true
           npx cap sync ios
+      - name: Native katman + min iOS 15
+        script: |
+          cp native/AppDelegate.swift ios/App/App/AppDelegate.swift
+          sed -i '' "s/platform :ios, '[0-9.]*'/platform :ios, '15.0'/" ios/App/Podfile
+          sed -i '' "s/IPHONEOS_DEPLOYMENT_TARGET = [0-9.]*;/IPHONEOS_DEPLOYMENT_TARGET = 15.0;/g" ios/App/App.xcodeproj/project.pbxproj
+          echo "native uygulandi + min iOS 15"
       - name: CocoaPods
         script: cd ios/App && pod install
       - name: Simülatörde derle (imzasız)
