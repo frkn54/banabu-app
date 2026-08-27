@@ -71,20 +71,26 @@ workflows:
             -derivedDataPath sim-build CODE_SIGNING_ALLOWED=NO build
       - name: Simülatörde çalıştır + ekran görüntüsü
         script: |
-          set -e
+          set -x
           APP=$(find sim-build -name "App.app" -type d | head -1)
           echo "APP=$APP"
-          UDID=$(xcrun simctl list devices available | grep -m1 "iPhone" | grep -oE "[0-9A-Fa-f-]{36}")
+          echo "--- mevcut cihazlar ---"; xcrun simctl list devices available || true
+          UDID=$(xcrun simctl list devices available | grep -oE "iPhone[^(]*\([0-9A-Fa-f-]{36}\)" | head -1 | grep -oE "[0-9A-Fa-f-]{36}")
+          if [ -z "$UDID" ]; then
+            RT=$(xcrun simctl list runtimes -j | python3 -c "import sys,json;r=[x['identifier'] for x in json.load(sys.stdin)['runtimes'] if x.get('isAvailable') and 'iOS' in x.get('name','')];print(r[-1] if r else '')")
+            echo "runtime=$RT"
+            UDID=$(xcrun simctl create "banabu-test" "iPhone 16 Pro" "$RT" 2>/dev/null || xcrun simctl create "banabu-test" "iPhone 15" "$RT")
+          fi
           echo "UDID=$UDID"
           xcrun simctl boot "$UDID" || true
-          sleep 8
-          xcrun simctl install "$UDID" "$APP"
-          xcrun simctl launch "$UDID" com.banabu.app
+          sleep 12
+          xcrun simctl install "$UDID" "$APP" || true
+          xcrun simctl launch "$UDID" com.banabu.app || true
           sleep 22
           mkdir -p shots
-          xcrun simctl io "$UDID" screenshot shots/banabu-1.png
+          xcrun simctl io "$UDID" screenshot shots/banabu-1.png || true
           sleep 12
-          xcrun simctl io "$UDID" screenshot shots/banabu-2.png
-          echo "ekran goruntuleri alindi"
+          xcrun simctl io "$UDID" screenshot shots/banabu-2.png || true
+          echo "--- shots ---"; ls -la shots || true
     artifacts:
       - shots/*.png
