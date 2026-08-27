@@ -71,6 +71,7 @@ workflows:
             -derivedDataPath sim-build CODE_SIGNING_ALLOWED=NO build
       - name: Simülatörde çalıştır + ekran görüntüsü
         script: |
+          exec > >(tee sim.log) 2>&1
           set -x
           APP=$(find sim-build -name "App.app" -type d | head -1)
           echo "APP=$APP"
@@ -94,3 +95,4 @@ workflows:
           echo "--- shots ---"; ls -la shots || true
     artifacts:
       - shots/*.png
+      - sim.log
