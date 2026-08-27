@@ -30,7 +30,8 @@ workflows:
           sed -i '' "s/platform :ios, '[0-9.]*'/platform :ios, '15.0'/" ios/App/Podfile
           sed -i '' "s/IPHONEOS_DEPLOYMENT_TARGET = [0-9.]*;/IPHONEOS_DEPLOYMENT_TARGET = 15.0;/g" ios/App/App.xcodeproj/project.pbxproj
           /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $BUILD_NUMBER" ios/App/App/Info.plist || true
-          echo "native + min iOS 15 + build no $BUILD_NUMBER"
+          sed -i '' 's/TARGETED_DEVICE_FAMILY = "1,2"/TARGETED_DEVICE_FAMILY = "1"/g' ios/App/App.xcodeproj/project.pbxproj
+          echo "native + min iOS 15 + build $BUILD_NUMBER + iPhone-only"
       - name: CocoaPods
         script: cd ios/App && pod install
       - name: iOS imza — hazır sertifika + profil (banabu_signing)
@@ -75,7 +76,8 @@ workflows:
           sed -i '' "s/platform :ios, '[0-9.]*'/platform :ios, '15.0'/" ios/App/Podfile
           sed -i '' "s/IPHONEOS_DEPLOYMENT_TARGET = [0-9.]*;/IPHONEOS_DEPLOYMENT_TARGET = 15.0;/g" ios/App/App.xcodeproj/project.pbxproj
           /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $BUILD_NUMBER" ios/App/App/Info.plist || true
-          echo "native + min iOS 15 + build no $BUILD_NUMBER"
+          sed -i '' 's/TARGETED_DEVICE_FAMILY = "1,2"/TARGETED_DEVICE_FAMILY = "1"/g' ios/App/App.xcodeproj/project.pbxproj
+          echo "native + min iOS 15 + build $BUILD_NUMBER + iPhone-only"
       - name: CocoaPods
         script: cd ios/App && pod install
       - name: Simülatörde derle (imzasız)
