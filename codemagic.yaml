@@ -96,3 +96,26 @@ workflows:
     artifacts:
       - shots/*.png
       - sim.log
+
+  # iOS Xcode proje kaynağını çıkar (native özelleştirme için: AppDelegate/Info.plist/offline vb.)
+  banabu-ios-eject:
+    name: iOS proje kaynağı çıkar
+    max_build_duration: 20
+    instance_type: mac_mini_m2
+    environment:
+      xcode: latest
+      cocoapods: default
+      node: 20
+    scripts:
+      - name: npm + cap add ios + sync
+        script: |
+          npm install
+          npx cap add ios || true
+          npx cap sync ios
+      - name: iOS kaynağını zip'le
+        script: |
+          cd ios
+          zip -rq "$CM_BUILD_DIR/ios-src.zip" App -x "*/Pods/*" "*/build/*" "*/public/*"
+          ls -la "$CM_BUILD_DIR/ios-src.zip"
+    artifacts:
+      - ios-src.zip
