@@ -31,6 +31,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
         netMonitor.start(queue: DispatchQueue.global(qos: .background))
+        // GECICI GORSEL TEST — offline ekranini dogrula (sonra kaldirilacak)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 4) { self.showOfflineScreen() }
         return true
     }
 
