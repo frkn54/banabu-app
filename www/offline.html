@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Banabu — Bağlantı yok</title>
+<style>
+  :root { --ink:#111; --muted:#666; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { height:100%; margin:0; }
+  body {
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    background:#fff; color:var(--ink);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:32px; padding-top:calc(env(safe-area-inset-top) + 32px);
+  }
+  .brand { font-weight:800; letter-spacing:.18em; font-size:34px; margin-bottom:6px; }
+  .tag { color:var(--muted); font-size:13px; letter-spacing:.12em; text-transform:uppercase; margin-bottom:40px; }
+  h1 { font-size:20px; margin:0 0 8px; }
+  p { color:var(--muted); font-size:15px; line-height:1.5; margin:0 0 28px; max-width:300px; }
+  button {
+    appearance:none; border:0; background:var(--ink); color:#fff;
+    font-size:16px; font-weight:600; padding:14px 34px; border-radius:12px;
+  }
+  button:active { opacity:.85; }
+</style>
+</head>
+<body>
+  <div class="brand">BANABU</div>
+  <div class="tag">elbise çok yakışır</div>
+  <h1>İnternet bağlantısı yok</h1>
+  <p>Banabu'ya ulaşmak için bağlantını kontrol edip tekrar dene.</p>
+  <button onclick="location.reload()">Tekrar Dene</button>
+  <script>
+    // Bağlantı geri gelince otomatik yenile
+    window.addEventListener('online', function(){ location.reload(); });
+  </script>
+</body>
+</html>

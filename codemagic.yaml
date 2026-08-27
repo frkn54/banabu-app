@@ -1,0 +1,90 @@
+# Codemagic CI — Banabu iOS (AYRI küçük repo: frkn54/banabu-app → hızlı fetch).
+# Capacitor projesi repo KÖKÜNDE. İmza: banabu_signing grubu (ASC API'den üretilen cert+profil, Codemagic API ile secure var).
+# ASC integration adı: APP_FABRIKASI_ASC (Codemagic Personal → Integrations → Developer Portal).
+workflows:
+  banabu-ios:
+    name: Banabu iOS → TestFlight
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    environment:
+      groups:
+        - banabu_signing   # CM_CERTIFICATE(.p12 b64) + CM_CERTIFICATE_PASSWORD + CM_PROVISIONING_PROFILE(b64)
+      xcode: latest
+      cocoapods: default
+      node: 20
+      vars:
+        BUNDLE_ID: "com.banabu.app"
+        APP_STORE_APPLE_ID: "6805493001"
+    integrations:
+      app_store_connect: APP_FABRIKASI_ASC
+    scripts:
+      - name: Bağımlılıklar (npm)
+        script: npm install
+      - name: iOS platformu ekle + sync
+        script: |
+          npx cap add ios || true
+          npx cap sync ios
+      - name: CocoaPods
+        script: cd ios/App && pod install
+      - name: iOS imza — hazır sertifika + profil (banabu_signing)
+        script: |
+          keychain initialize
+          PP="$HOME/Library/MobileDevice/Provisioning Profiles"
+          mkdir -p "$PP"
+          echo "$CM_PROVISIONING_PROFILE" | base64 --decode > "$PP/banabu.mobileprovision"
+          echo "$CM_CERTIFICATE" | base64 --decode > /tmp/banabu-cert.p12
+          keychain add-certificates --certificate /tmp/banabu-cert.p12 --certificate-password "$CM_CERTIFICATE_PASSWORD"
+          xcode-project use-profiles
+      - name: Arşivle (.ipa)
+        script: |
+          xcode-project build-ipa --workspace "ios/App/App.xcworkspace" --scheme "App"
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
+
+  # iPhone'suz görsel test: bulut Mac iOS Simülatöründe çalıştır + ekran görüntüsü (imzasız).
+  banabu-ios-preview:
+    name: Banabu iOS Simülatör Önizleme
+    max_build_duration: 45
+    instance_type: mac_mini_m2
+    environment:
+      xcode: latest
+      cocoapods: default
+      node: 20
+    scripts:
+      - name: Bağımlılıklar (npm)
+        script: npm install
+      - name: iOS platformu ekle + sync
+        script: |
+          npx cap add ios || true
+          npx cap sync ios
+      - name: CocoaPods
+        script: cd ios/App && pod install
+      - name: Simülatörde derle (imzasız)
+        script: |
+          xcodebuild -workspace ios/App/App.xcworkspace -scheme App \
+            -sdk iphonesimulator -configuration Debug \
+            -derivedDataPath sim-build CODE_SIGNING_ALLOWED=NO build
+      - name: Simülatörde çalıştır + ekran görüntüsü
+        script: |
+          set -e
+          APP=$(find sim-build -name "App.app" -type d | head -1)
+          echo "APP=$APP"
+          UDID=$(xcrun simctl list devices available | grep -m1 "iPhone" | grep -oE "[0-9A-Fa-f-]{36}")
+          echo "UDID=$UDID"
+          xcrun simctl boot "$UDID" || true
+          sleep 8
+          xcrun simctl install "$UDID" "$APP"
+          xcrun simctl launch "$UDID" com.banabu.app
+          sleep 22
+          mkdir -p shots
+          xcrun simctl io "$UDID" screenshot shots/banabu-1.png
+          sleep 12
+          xcrun simctl io "$UDID" screenshot shots/banabu-2.png
+          echo "ekran goruntuleri alindi"
+    artifacts:
+      - shots/*.png

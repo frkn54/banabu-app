@@ -1,0 +1,32 @@
+{
+  "appId": "com.banabu.app",
+  "appName": "Banabu",
+  "webDir": "www",
+  "server": {
+    "url": "https://banabu.com.tr",
+    "cleartext": false,
+    "allowNavigation": [
+      "banabu.com.tr",
+      "*.banabu.com.tr",
+      "www.paytr.com",
+      "*.paytr.com",
+      "*.iyzipay.com",
+      "*.iyzico.com"
+    ]
+  },
+  "ios": {
+    "contentInset": "always",
+    "backgroundColor": "#FFFFFF",
+    "limitsNavigationsToAppBoundDomains": false
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 800,
+      "backgroundColor": "#FFFFFF",
+      "showSpinner": false
+    },
+    "PushNotifications": {
+      "presentationOptions": ["badge", "sound", "alert"]
+    }
+  }
+}

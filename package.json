@@ -1,0 +1,23 @@
+{
+  "name": "banabu-ios",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Banabu iOS kabuğu (Capacitor) — banabu.com.tr'yi App Store uygulaması yapar.",
+  "scripts": {
+    "add:ios": "cap add ios",
+    "sync": "cap sync ios",
+    "open:ios": "cap open ios"
+  },
+  "dependencies": {
+    "@capacitor/app": "^6.0.2",
+    "@capacitor/core": "^6.2.0",
+    "@capacitor/ios": "^6.2.0",
+    "@capacitor/push-notifications": "^6.0.4",
+    "@capacitor/splash-screen": "^6.0.3",
+    "capacitor-native-biometric": "^4.2.2"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.2.0"
+  },
+  "comment": "Kurulumda güncelle: npm i @capacitor/core@latest @capacitor/ios@latest @capacitor/cli@latest (MASTER §4.2: eski sürümde ITMS-90338 reddi vakası — GÜNCEL sürüm şart)."
+}

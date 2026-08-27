@@ -1,0 +1,7 @@
+node_modules/
+ios/
+sim-build/
+build/
+shots/
+*.log
+.DS_Store
