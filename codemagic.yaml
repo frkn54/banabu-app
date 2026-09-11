@@ -24,6 +24,27 @@ workflows:
         script: |
           npx cap add ios || true
           npx cap sync ios
+      - name: Marka ikonu + splash (Apple 2.3.8 — placeholder YASAK)
+        script: |
+          set -e
+          ICONSET="ios/App/App/Assets.xcassets/AppIcon.appiconset"
+          SPLASHSET="ios/App/App/Assets.xcassets/Splash.imageset"
+          echo "--- ONCE ---"; ls -la "$ICONSET" || true
+          for f in "$ICONSET"/*.png; do
+            W=$(sips -g pixelWidth  "$f" | awk '/pixelWidth/{print $2}')
+            H=$(sips -g pixelHeight "$f" | awk '/pixelHeight/{print $2}')
+            cp icon/AppIcon-1024.png "$f"
+            sips -s format png -z "$H" "$W" "$f" >/dev/null
+          done
+          if [ -d "$SPLASHSET" ]; then
+            for f in "$SPLASHSET"/*.png; do
+              W=$(sips -g pixelWidth  "$f" | awk '/pixelWidth/{print $2}')
+              H=$(sips -g pixelHeight "$f" | awk '/pixelHeight/{print $2}')
+              cp icon/Splash-2732.png "$f"
+              sips -s format png -z "$H" "$W" "$f" >/dev/null
+            done
+          fi
+          echo "--- SONRA ---"; sips -g pixelWidth -g pixelHeight -g hasAlpha "$ICONSET"/*.png
       - name: Native katman + min iOS 15
         script: |
           cp native/AppDelegate.swift ios/App/App/AppDelegate.swift
@@ -70,6 +91,27 @@ workflows:
         script: |
           npx cap add ios || true
           npx cap sync ios
+      - name: Marka ikonu + splash (Apple 2.3.8 — placeholder YASAK)
+        script: |
+          set -e
+          ICONSET="ios/App/App/Assets.xcassets/AppIcon.appiconset"
+          SPLASHSET="ios/App/App/Assets.xcassets/Splash.imageset"
+          echo "--- ONCE ---"; ls -la "$ICONSET" || true
+          for f in "$ICONSET"/*.png; do
+            W=$(sips -g pixelWidth  "$f" | awk '/pixelWidth/{print $2}')
+            H=$(sips -g pixelHeight "$f" | awk '/pixelHeight/{print $2}')
+            cp icon/AppIcon-1024.png "$f"
+            sips -s format png -z "$H" "$W" "$f" >/dev/null
+          done
+          if [ -d "$SPLASHSET" ]; then
+            for f in "$SPLASHSET"/*.png; do
+              W=$(sips -g pixelWidth  "$f" | awk '/pixelWidth/{print $2}')
+              H=$(sips -g pixelHeight "$f" | awk '/pixelHeight/{print $2}')
+              cp icon/Splash-2732.png "$f"
+              sips -s format png -z "$H" "$W" "$f" >/dev/null
+            done
+          fi
+          echo "--- SONRA ---"; sips -g pixelWidth -g pixelHeight -g hasAlpha "$ICONSET"/*.png
       - name: Native katman + min iOS 15
         script: |
           cp native/AppDelegate.swift ios/App/App/AppDelegate.swift
@@ -108,6 +150,13 @@ workflows:
           xcrun simctl io "$UDID" screenshot "$SHOTS/banabu-1.png" || true
           sleep 12
           xcrun simctl io "$UDID" screenshot "$SHOTS/banabu-2.png" || true
+          # --- IKON DOGRULAMA: uygulamayi kapat, ana ekrandaki ikonu cek (Apple 2.3.8) ---
+          xcrun simctl terminate "$UDID" com.banabu.app || true
+          sleep 5
+          xcrun simctl io "$UDID" screenshot "$SHOTS/anaekran-ikon.png" || true
+          # derlenmis .app icindeki ikonu da cikar
+          cp "$APP/AppIcon60x60@2x.png" "$SHOTS/bundle-AppIcon60x60@2x.png" 2>/dev/null || true
+          cp "$APP"/AppIcon*.png "$SHOTS/" 2>/dev/null || true
           echo "--- shots ---"; ls -la shots || true
     artifacts:
       - shots/*.png
