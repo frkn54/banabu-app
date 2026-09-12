@@ -17,7 +17,8 @@
   "ios": {
     "contentInset": "always",
     "backgroundColor": "#FFFFFF",
-    "limitsNavigationsToAppBoundDomains": false
+    "limitsNavigationsToAppBoundDomains": false,
+    "appendUserAgent": "BanabuApp/1.0"
   },
   "plugins": {
     "SplashScreen": {
@@ -26,7 +27,11 @@
       "showSpinner": false
     },
     "PushNotifications": {
-      "presentationOptions": ["badge", "sound", "alert"]
+      "presentationOptions": [
+        "badge",
+        "sound",
+        "alert"
+      ]
     }
   }
 }
